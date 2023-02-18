@@ -1,4 +1,4 @@
-package com.sample.demo.config;
+package com.sample.demo.performance;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -13,22 +13,20 @@ import java.util.concurrent.TimeUnit;
 @Aspect
 @Component
 @Slf4j
-public class AOPConfig {
+public class TimeMetricLogger {
 
     MeterRegistry registry;
 
-    public AOPConfig(MeterRegistry registry){
+    public TimeMetricLogger(MeterRegistry registry){
         this.registry = registry;
     }
 
-    @Around("@annotation(com.sample.demo.performance.TimeTrack)")
+    @Around("@annotation(com.sample.demo.performance.TrackTime)")
     public Object logTime(ProceedingJoinPoint joinPoint){
         long start = System.currentTimeMillis();
         String name = joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
         log.info("Method " + name + " execution started at:" + LocalDateTime.now());
-
         try {
-            log.info("getting into aop");
             return joinPoint.proceed(joinPoint.getArgs());
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -37,9 +35,7 @@ public class AOPConfig {
             long time = end - start;
             log.info("Method "+name+" execution lasted:"+time+" ms");
             log.info("Method "+name+" execution ended at:"+ LocalDateTime.now());
-
             this.registry.timer(name).record(time, TimeUnit.MILLISECONDS);
-
             if (time > 10){
                 log.warn("Method execution longer than 10 ms!");
             }

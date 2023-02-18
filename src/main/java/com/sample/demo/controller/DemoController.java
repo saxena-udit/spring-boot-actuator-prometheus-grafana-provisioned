@@ -1,15 +1,18 @@
 package com.sample.demo.controller;
 
-import com.sample.demo.performance.TimeTrack;
+import com.sample.demo.performance.TrackTime;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Timed
 public class DemoController {
 
-    @GetMapping("/")
-    @TimeTrack
-    public String hello(){
-        return "Welcome !!";
+    @GetMapping("/hello")
+    @TrackTime
+    public String helloAOP(){
+        return "Welcome !! This method is Tracked using AOP and Timed";
     }
+
 }
