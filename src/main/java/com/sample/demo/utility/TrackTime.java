@@ -1,4 +1,4 @@
-package com.sample.demo.performance;
+package com.sample.demo.utility;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
